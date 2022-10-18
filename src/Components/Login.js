@@ -1,4 +1,20 @@
+import { useEffect, useState } from "react";
+import NetWork from "./Network"
 export default function Login() {
+    const [users, setUsers] = useState();
+    useEffect(() => {
+        NetWork.post('/login', {
+            email: 'naveen@ranium.in',
+            password: 'Password@1',
+            device_name: 'test'
+        }).then(response => {
+            console.log(response)
+            setUsers(response.data)
+        }).catch(error => {
+            console.log(error)
+        })
+     }, []);
+
     return (
         <div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
             {/* Replace with your content */}
