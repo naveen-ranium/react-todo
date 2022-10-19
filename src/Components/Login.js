@@ -1,19 +1,23 @@
 import { useEffect, useState } from "react";
-import NetWork from "./Network"
-export default function Login() {
-    const [users, setUsers] = useState();
-    useEffect(() => {
+import NetWork from "./Network";
+import { useNavigate } from "react-router-dom";
+export default function Login(props) {
+    const csrf = () => NetWork.get('/sanctum/csrf-cookie')
+    const navigate = useNavigate();
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        await csrf()
         NetWork.post('/login', {
             email: 'naveen@ranium.in',
             password: 'Password@1',
             device_name: 'test'
         }).then(response => {
-            console.log(response)
-            setUsers(response.data)
+            sessionStorage.setItem('user', JSON.stringify(response.data));
+            navigate("/home"); 
         }).catch(error => {
             console.log(error)
         })
-     }, []);
+    }
 
     return (
         <div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
@@ -33,7 +37,7 @@ export default function Login() {
                 </div>
                 <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
                     <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-                        <form className="space-y-6" action="#" method="POST">
+                        <form onSubmit={handleSubmit} className="space-y-6">
                             <div>
                                 <label htmlFor="email" className="block text-sm font-medium text-gray-700">
                                     Email address
